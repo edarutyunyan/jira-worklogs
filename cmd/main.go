@@ -10,7 +10,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var START_DATE = time.Date(2024, 05, 13, 0, 0, 0, 0, time.Now().Location())
+var START_DATE = time.Date(2024, 05, 15, 0, 0, 0, 0, time.Now().Location())
 var ASSIGNEE_ID = "5f964829048052006bd12869"
 
 func main() {
@@ -50,8 +50,12 @@ func main() {
 		worklog, _, _ := client.Issue.GetWorklogs(issue.ID)
 
 		for _, wl := range worklog.Worklogs {
-			fmt.Println(issue.Key, wl.TimeSpent)
-			sumInHours += float64(wl.TimeSpentSeconds) / 60 / 60
+
+			if time.Time(*wl.Updated).After(START_DATE) {
+				fmt.Println(issue.Key, wl.TimeSpent)
+				sumInHours += float64(wl.TimeSpentSeconds) / 60 / 60
+			}
+
 		}
 	}
 
