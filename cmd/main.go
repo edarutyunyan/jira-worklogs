@@ -76,9 +76,3 @@ func main() {
 
 	fmt.Printf("\nTotal: %dh %.0fm \n", int(sumInHours), 60*(sumInHours-float64(int(sumInHours))))
 }
-
-// my id = 5f964829048052006bd12869
-
-// assignee = 5f964829048052006bd12869
-
-// todo: need to research how the timezones works
