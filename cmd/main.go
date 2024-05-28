@@ -11,7 +11,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var START_DATE = time.Date(2024, 05, 1, 0, 0, 0, 0, time.Now().Location())
+var START_DATE = time.Date(2024, 05, 28, 0, 0, 0, 0, time.Now().Location())
 
 func main() {
 	err := godotenv.Load()
@@ -60,9 +60,9 @@ func main() {
 					continue
 				}
 
-				if time.Time(*wl.Updated).After(START_DATE) {
+				if time.Time(*wl.Started).After(START_DATE) { // logged for the date (not when you logged, but for the date you logged)
 					length++
-					fmt.Println(issue.Key, time.Time(*wl.Updated).Format(time.RFC1123), "Author:", wl.Author.DisplayName)
+					fmt.Println(issue.Key, time.Time(*wl.Started).Format(time.RFC1123), "Author:", wl.Author.DisplayName)
 					fmt.Println(wl.Comment)
 					fmt.Println("TIME SPENT:", wl.TimeSpent)
 					fmt.Println("______________________________________________________")
