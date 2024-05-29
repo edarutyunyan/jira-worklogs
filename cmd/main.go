@@ -60,7 +60,7 @@ func main() {
 					continue
 				}
 
-				if time.Time(*wl.Started).After(START_DATE) { // logged for the date (not when you logged, but for the date you)
+				if time.Time(*wl.Started).After(START_DATE) { // logged for the date (not when you logged, but for the date you logged)
 					length++
 					fmt.Println(issue.Key, time.Time(*wl.Started).Format(time.RFC1123), "Author:", wl.Author.DisplayName)
 					fmt.Println(wl.Comment)
