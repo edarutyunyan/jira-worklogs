@@ -11,9 +11,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// var START_DATE = time.Date(2024, 05, 1, 0, 0, 0, 0, time.Now().Location())
-// var END_DATE time.Time = time.Date(2024, 05, 31, 0, 0, 0, 0, time.Now().Location())
-
 func main() {
 	err := godotenv.Load()
 
