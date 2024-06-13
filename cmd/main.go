@@ -11,11 +11,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type JDuration time.Duration
-
-func (d JDuration) WorkTime() string {
-	t := time.Duration(d)
-	return fmt.Sprintf("%.0fh %.0fm", t.Hours(), (t - t.Round(time.Hour)).Minutes())
+func Seconds2hm(seconds int) string {
+	minutes := seconds / 60
+	return fmt.Sprintf("%dh %dm", minutes/60, minutes%60)
 }
 
 func main() {
@@ -70,7 +68,7 @@ func main() {
 		fmt.Println("UNTIL:", endDate.Format(time.RFC1123))
 	}
 
-	sumInSeconds := 0.00
+	var sumInSeconds int
 
 	for _, url := range apiUrls {
 		client, err := jira.NewClient(tp.Client(), url)
@@ -113,14 +111,12 @@ func main() {
 					fmt.Println("TIME SPENT:", wl.TimeSpent)
 					fmt.Println("______________________________________________________")
 
-					sumInSeconds += float64(wl.TimeSpentSeconds)
+					sumInSeconds += wl.TimeSpentSeconds
 				}
 
 			}
 		}
 	}
 
-	duration := JDuration(sumInSeconds * float64(time.Second))
-
-	fmt.Printf("\nTotal: %s\n", duration.WorkTime())
+	fmt.Printf("\nTotal: %s\n", Seconds2hm(sumInSeconds))
 }
