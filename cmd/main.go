@@ -11,6 +11,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type JDuration time.Duration
+
+func (d JDuration) WorkTime() string {
+	t := time.Duration(d)
+	return fmt.Sprintf("%.0fh %.0fm", t.Hours(), (t - t.Round(time.Hour)).Minutes())
+}
+
 func main() {
 	err := godotenv.Load()
 
@@ -113,7 +120,7 @@ func main() {
 		}
 	}
 
-	duration := time.Duration(sumInSeconds * float64(time.Second))
+	duration := JDuration(sumInSeconds * float64(time.Second))
 
-	fmt.Printf("\nTotal: %.0fh %.0fm \n", duration.Hours(), duration.Hours()*60-duration.Minutes())
+	fmt.Printf("\nTotal: %s\n", duration.WorkTime())
 }
