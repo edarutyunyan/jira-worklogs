@@ -21,7 +21,7 @@ func (output *OutputService) FormattedStdOutString(issue jira.Issue, wl jira.Wor
 		fmt.Sprintf("%s %s Author: %s", issue.Key, time.Time(*wl.Started).Local().Format(WORKLOG_STARTED_DATE_FORMAT), wl.Author.DisplayName),
 		fmt.Sprintf("COMMENT: %s", wl.Comment),
 		fmt.Sprintf("TIME SPENT: %s", wl.TimeSpent),
-		"______________________________________________________",
+		"______________________________________________________\n\n",
 	}
 
 	return strings.Join(outputStringsArray, "\n")
