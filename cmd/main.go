@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"jira-worklogs/pkg/services"
 	"log"
 	"os"
 	"strings"
@@ -58,6 +59,8 @@ func main() {
 		Username: user,
 		Password: apiKey,
 	}
+
+	srv := services.NewServices(*services.NewOutputService())
 
 	search := fmt.Sprintf(
 		"worklogAuthor = %s and worklogDate >= %s",
@@ -122,10 +125,7 @@ func main() {
 
 					if started.After(arguments[0]) && isBefore { // logged for the date (not when you logged, but for the date you logged)
 						length++
-						fmt.Println(issue.Key, time.Time(*wl.Started).Local().Format(time.RFC1123), "Author:", wl.Author.DisplayName)
-						fmt.Println("COMMENT:", wl.Comment)
-						fmt.Println("TIME SPENT:", wl.TimeSpent)
-						fmt.Println("______________________________________________________")
+						fmt.Print(srv.Output.FormattedStdOutString(issue, wl))
 
 						sumInSeconds += wl.TimeSpentSeconds
 					}
