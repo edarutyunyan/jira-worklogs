@@ -104,8 +104,6 @@ func main() {
 			}
 			lastIssue = resp.StartAt
 
-			length := 0
-
 			for _, issue := range issues {
 				worklog, _, _ := client.Issue.GetWorklogs(issue.ID)
 
@@ -124,9 +122,7 @@ func main() {
 					}
 
 					if started.After(arguments[0]) && isBefore { // logged for the date (not when you logged, but for the date you logged)
-						length++
 						fmt.Print(srv.Output.FormattedStdOutString(issue, wl))
-
 						sumInSeconds += wl.TimeSpentSeconds
 					}
 				}
