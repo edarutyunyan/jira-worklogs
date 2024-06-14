@@ -11,6 +11,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var ResultsPerPage int = 50
+var TotalCount int = -1
+
 func Seconds2hm(seconds int) string {
 	minutes := seconds / 60
 	return fmt.Sprintf("%dh %dm", minutes/60, minutes%60)
@@ -77,41 +80,62 @@ func main() {
 			log.Fatal("Failed create a client")
 			return
 		}
+		lastIssue := 0
 
-		issues, _, err := client.Issue.Search(search, &jira.SearchOptions{})
+	lpGetIssues:
+		for {
+			issues, resp, err := client.Issue.Search(search, &jira.SearchOptions{
+				StartAt:    lastIssue,
+				MaxResults: ResultsPerPage,
+			})
 
-		if err != nil {
-			log.Fatal("Failed fetch a board", err.Error())
-			return
-		}
+			if err != nil {
+				log.Fatal("Failed fetch a board", err.Error())
+				return
+			}
+			if resp.Total == 0 {
+				break
+			}
+			if TotalCount < 0 || TotalCount > resp.Total {
+				TotalCount = resp.Total
+			}
+			lastIssue = resp.StartAt
 
-		length := 0
+			length := 0
 
-		for _, issue := range issues {
-			worklog, _, _ := client.Issue.GetWorklogs(issue.ID)
+			for _, issue := range issues {
+				worklog, _, _ := client.Issue.GetWorklogs(issue.ID)
 
-			for _, wl := range worklog.Worklogs {
-				if wl.Author.AccountID != workLogUserId {
-					continue
+				for _, wl := range worklog.Worklogs {
+					if wl.Author.AccountID != workLogUserId {
+						continue
+					}
+
+					started := time.Time(*wl.Started)
+					endDate, endDateDefined := arguments[1]
+
+					isBefore := true
+
+					if endDateDefined {
+						isBefore = started.Before(endDate)
+					}
+
+					if started.After(arguments[0]) && isBefore { // logged for the date (not when you logged, but for the date you logged)
+						length++
+						fmt.Println(issue.Key, time.Time(*wl.Started).Local().Format(time.RFC1123), "Author:", wl.Author.DisplayName)
+						fmt.Println("COMMENT:", wl.Comment)
+						fmt.Println("TIME SPENT:", wl.TimeSpent)
+						fmt.Println("______________________________________________________")
+
+						sumInSeconds += wl.TimeSpentSeconds
+					}
 				}
 
-				started := time.Time(*wl.Started)
-				endDate, endDateDefined := arguments[1]
-
-				isBefore := true
-
-				if endDateDefined {
-					isBefore = started.Before(endDate)
-				}
-
-				if started.After(arguments[0]) && isBefore { // logged for the date (not when you logged, but for the date you logged)
-					length++
-					fmt.Println(issue.Key, time.Time(*wl.Started).Local().Format(time.RFC1123), "Author:", wl.Author.DisplayName)
-					fmt.Println("COMMENT:", wl.Comment)
-					fmt.Println("TIME SPENT:", wl.TimeSpent)
-					fmt.Println("______________________________________________________")
-
-					sumInSeconds += wl.TimeSpentSeconds
+				lastIssue++
+				// to see pages on stderr:
+				// fmt.Fprintf(os.Stderr, "%d/%d\n", lastIssue, TotalCount)
+				if lastIssue >= TotalCount {
+					break lpGetIssues
 				}
 			}
 		}
