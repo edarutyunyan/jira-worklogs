@@ -107,13 +107,12 @@ func main() {
 				if started.After(arguments[0]) && isBefore { // logged for the date (not when you logged, but for the date you logged)
 					length++
 					fmt.Println(issue.Key, time.Time(*wl.Started).Local().Format(time.RFC1123), "Author:", wl.Author.DisplayName)
-					fmt.Println(wl.Comment)
+					fmt.Println("COMMENT:", wl.Comment)
 					fmt.Println("TIME SPENT:", wl.TimeSpent)
 					fmt.Println("______________________________________________________")
 
 					sumInSeconds += wl.TimeSpentSeconds
 				}
-
 			}
 		}
 	}
