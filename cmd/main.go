@@ -67,7 +67,7 @@ func main() {
 		workLogUserId, arguments[0].Format("2006-01-02"),
 	)
 
-	fmt.Println("WORKLOG SINCE:", arguments[0].Format(time.RFC1123))
+	fmt.Printf("WORKLOG SINCE: %s \n\n", arguments[0].Format(time.RFC1123))
 
 	if endDate, ok := arguments[1]; ok {
 		search = search + fmt.Sprintf(" and worklogDate <= %s", endDate.Format("2006-01-02"))
